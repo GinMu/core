@@ -255,15 +255,15 @@ export type KeyringControllerOptions = {
   messenger: KeyringControllerMessenger;
   state?: { vault?: string; keyringsMetadata?: KeyringMetadata[] };
 } & (
-    | {
+  | {
       cacheEncryptionKey: true;
       encryptor?: ExportableKeyEncryptor;
     }
-    | {
+  | {
       cacheEncryptionKey?: false;
       encryptor?: GenericEncryptor | ExportableKeyEncryptor;
     }
-  );
+);
 
 /**
  * A keyring object representation.
@@ -418,15 +418,15 @@ export type ExportableKeyEncryptor = GenericEncryptor & {
 
 export type KeyringSelector =
   | {
-    type: string;
-    index?: number;
-  }
+      type: string;
+      index?: number;
+    }
   | {
-    address: Hex;
-  }
+      address: Hex;
+    }
   | {
-    id: string;
-  };
+      id: string;
+    };
 
 /**
  * A function executed within a mutually exclusive lock, with
@@ -787,7 +787,7 @@ export class KeyringController extends BaseController<
     password: string,
     seed: Uint8Array,
     type: string = KeyringTypes.hd,
-    options = { numberOfAccounts: 1 }
+    options = { numberOfAccounts: 1 },
   ): Promise<void> {
     return this.#persistOrRollback(async () => {
       assertIsValidPassword(password);
@@ -796,7 +796,7 @@ export class KeyringController extends BaseController<
         type,
         opts: {
           mnemonic: seed,
-          ...options
+          ...options,
         },
       });
     });
@@ -1546,8 +1546,8 @@ export class KeyringController extends BaseController<
     options:
       | { createIfMissing?: false }
       | { createIfMissing: true; createWithData?: unknown } = {
-        createIfMissing: false,
-      },
+      createIfMissing: false,
+    },
   ): Promise<CallbackResult> {
     this.#assertIsUnlocked();
 
