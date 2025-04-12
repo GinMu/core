@@ -255,15 +255,15 @@ export type KeyringControllerOptions = {
   messenger: KeyringControllerMessenger;
   state?: { vault?: string; keyringsMetadata?: KeyringMetadata[] };
 } & (
-  | {
+    | {
       cacheEncryptionKey: true;
       encryptor?: ExportableKeyEncryptor;
     }
-  | {
+    | {
       cacheEncryptionKey?: false;
       encryptor?: GenericEncryptor | ExportableKeyEncryptor;
     }
-);
+  );
 
 /**
  * A keyring object representation.
@@ -418,15 +418,15 @@ export type ExportableKeyEncryptor = GenericEncryptor & {
 
 export type KeyringSelector =
   | {
-      type: string;
-      index?: number;
-    }
+    type: string;
+    index?: number;
+  }
   | {
-      address: Hex;
-    }
+    address: Hex;
+  }
   | {
-      id: string;
-    };
+    id: string;
+  };
 
 /**
  * A function executed within a mutually exclusive lock, with
@@ -777,22 +777,26 @@ export class KeyringController extends BaseController<
    * using the given seed phrase.
    *
    * @param password - Password to unlock keychain.
-   * @param seed - A BIP39-compliant seed phrase as Uint8Array,
+   * @param seed - A BIP39-compliant seed phrase as Uint8Array.
+   * @param type - Keyring type.
+   * @param options - Options for the keyring.
    * either as a string or an array of UTF-8 bytes that represent the string.
    * @returns Promise resolving when the operation ends successfully.
    */
   async createNewVaultAndRestore(
     password: string,
     seed: Uint8Array,
+    type: string = KeyringTypes.hd,
+    options = { numberOfAccounts: 1 }
   ): Promise<void> {
     return this.#persistOrRollback(async () => {
       assertIsValidPassword(password);
 
       await this.#createNewVaultWithKeyring(password, {
-        type: KeyringTypes.hd,
+        type,
         opts: {
           mnemonic: seed,
-          numberOfAccounts: 1,
+          ...options
         },
       });
     });
@@ -1542,8 +1546,8 @@ export class KeyringController extends BaseController<
     options:
       | { createIfMissing?: false }
       | { createIfMissing: true; createWithData?: unknown } = {
-      createIfMissing: false,
-    },
+        createIfMissing: false,
+      },
   ): Promise<CallbackResult> {
     this.#assertIsUnlocked();
 
@@ -2286,11 +2290,11 @@ export class KeyringController extends BaseController<
 
       const serializedKeyrings = await this.#getSerializedKeyrings();
 
-      if (
-        !serializedKeyrings.some((keyring) => keyring.type === KeyringTypes.hd)
-      ) {
-        throw new Error(KeyringControllerError.NoHdKeyring);
-      }
+      // if (
+      //   !serializedKeyrings.some((keyring) => keyring.type === KeyringTypes.hd)
+      // ) {
+      //   throw new Error(KeyringControllerError.NoHdKeyring);
+      // }
 
       const updatedState: Partial<KeyringControllerState> = {};
 
